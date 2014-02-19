@@ -15,7 +15,7 @@ def get_packages(dirs):
     return packages
 
 setup(name = "pg_import",
-      description="uLab portal",
+      description="repo -> pg_dump",
       license="""uiscom license""",
       version = "0.1",
       maintainer = "Dima Beloborodov",
