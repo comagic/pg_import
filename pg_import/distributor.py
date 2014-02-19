@@ -34,7 +34,7 @@ class Distributor:
         for root, dirs, files in os.walk(src_dir):
             rel_dir = os.path.relpath(root, src_dir)
             dir_name = os.path.basename(root)
-            if os.path.relpath(root, src_dir) == '.':
+            if rel_dir == '.':
                 continue
             for f in files:
                 if rel_dir == dir_name == f.split('.')[0]:
@@ -44,7 +44,6 @@ class Distributor:
                     item_type = dir_name
                     schema_name = rel_dir.split('/')[0]
                     self.schemas[schema_name].items[item_type][item_name] = item_types[item_type](self, os.path.join(root, f))
-#        print self.schemas['public'].items['casts'].values()[0].data
 
     def restore_structure(self, out_file):
         out_file.write('set check_function_bodies=off;\n')
