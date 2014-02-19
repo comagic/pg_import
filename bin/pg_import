@@ -1,0 +1,33 @@
+#!/usr/bin/python2.7
+# -*- coding:utf-8 -*-
+
+import os
+import sys
+import argparse
+import psycopg2
+from distributor import Distributor
+from data_restore import DataRestore
+
+arg_parser = argparse.ArgumentParser(description='Convert object files in plane postgres backup file for restore database',
+                                     epilog='Report bugs to <andrey@ulab.ru>.')
+arg_parser.add_argument('src_dir', help='directory with object files')
+arg_parser.add_argument('out_file', nargs='?', help='out file')
+
+args = arg_parser.parse_args()
+
+if not os.access(args.src_dir, os.F_OK):
+    arg_parser.error("can not access to directory '%s'" % args.src_dir)
+
+if args.out_file:
+	out_file = open(args.out_file, 'w')
+else:
+	out_file = sys.stdout
+
+d = Distributor()
+d.parse(args.src_dir)
+d.restore_structure(out_file)
+
+r = DataRestore(args.src_dir)
+r.restore_all(out_file)
+
+d.restore_complite(out_file)
