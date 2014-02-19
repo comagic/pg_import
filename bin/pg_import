@@ -5,8 +5,8 @@ import os
 import sys
 import argparse
 import psycopg2
-from pg_export.distributor import Distributor
-from pg_export.data_restore import DataRestore
+from pg_import.distributor import Distributor
+from pg_import.data_restore import DataRestore
 
 arg_parser = argparse.ArgumentParser(description='Convert object files in plane postgres backup file for restore database',
                                      epilog='Report bugs to <andrey@ulab.ru>.')
