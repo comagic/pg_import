@@ -10,24 +10,28 @@ from pg_import.data_restore import DataRestore
 
 arg_parser = argparse.ArgumentParser(description='Convert object files in plane postgres backup file for restore database',
                                      epilog='Report bugs to <andrey@ulab.ru>.')
+section_def = \
+arg_parser.add_argument('--section', action='append', choices=['pre-data', 'data', 'post-data'])
 arg_parser.add_argument('src_dir', help='directory with object files')
-arg_parser.add_argument('out_file', nargs='?', help='out file')
-
+arg_parser.add_argument('out_file', nargs='?', type=argparse.FileType('w'), help='out file')
 args = arg_parser.parse_args()
 
+args.section = set(args.section or section_def.choices)
+args.out_file = args.out_file or sys.stdout
+
 if not os.access(args.src_dir, os.F_OK):
-    arg_parser.error("can not access to directory '%s'" % args.src_dir)
+    arg_parser.error("Can not access to directory '%s'" % args.src_dir)
 
-if args.out_file:
-	out_file = open(args.out_file, 'w')
-else:
-	out_file = sys.stdout
+if set(['pre-data', 'post-data']) & args.section:
+    d = Distributor()
+    d.parse(args.src_dir)
 
-d = Distributor()
-d.parse(args.src_dir)
-d.restore_structure(out_file)
+if 'pre-data' in args.section:
+    d.restore_structure(args.out_file)
 
-r = DataRestore(args.src_dir)
-r.restore_all(out_file)
+if 'data' in args.section:
+    r = DataRestore(args.src_dir)
+    r.restore_all(args.out_file)
 
-d.restore_complite(out_file)
+if 'post-data' in args.section:
+    d.restore_complite(args.out_file)

@@ -17,7 +17,7 @@ def get_packages(dirs):
 setup(name = "pg_import",
       description="repo -> pg_dump",
       license="""uiscom license""",
-      version = "0.1",
+      version = "0.2",
       maintainer = "Dima Beloborodov",
       maintainer_email = "d.beloborodov@ulab.ru",
       url = "http://uiscom.ru",
