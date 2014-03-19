@@ -13,12 +13,12 @@ class PgObject(object):
         self.is_restored_structure = False
         self.is_restored_complite = False
 
-        if '\n--depend on table ' in self.data:
+        if '\n--depend on table ' in self.data or \
+           '\n--depend on type ' in self.data:
             for s in self.data.split('\n'):
-                if s.startswith('--depend on table '): 
-                    table_name = re.match('--depend on table (.*)', s).groups()[0]
-                    schema, name = table_name.split('.')
-                    self.depends.append({'type':'tables', 'schema':schema, 'name':name})
+                if s.startswith('--depend on '): 
+                    type, schema, name = re.match('--depend on (\w*) (\w*)\.(\w*)', s).groups()
+                    self.depends.append({'type': type+'s', 'schema':schema, 'name':name})
 
     def restore_structure(self, out_file):
         if not self.is_restored_structure:
