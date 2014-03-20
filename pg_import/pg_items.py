@@ -13,8 +13,7 @@ class PgObject(object):
         self.is_restored_structure = False
         self.is_restored_complite = False
 
-        if '\n--depend on table ' in self.data or \
-           '\n--depend on type ' in self.data:
+        if '\n--depend on ' in self.data:
             for s in self.data.split('\n'):
                 if s.startswith('--depend on '): 
                     type, schema, name = re.match('--depend on (\w*) (\w*)\.(\w*)', s).groups()
@@ -51,7 +50,8 @@ class Table(PgObject):
             self.data += pk
 
         while 1:
-            uni = re.match('.*(\nalter table only[^\n]*\n    add constraint [^\n]* unique[^\n]*;\n).*', self.post_data, flags=re.S)
+            uni = re.match('.*(\ncreate unique index[^\n]*;\n).*', self.post_data, flags=re.S) or \
+                  re.match('.*(\nalter table only[^\n]*\n    add constraint [^\n]* unique[^\n]*;\n).*', self.post_data, flags=re.S)
             if uni:
                 uni = uni.groups()[0]
                 self.post_data = self.post_data.replace(uni, '')
