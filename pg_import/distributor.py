@@ -20,8 +20,10 @@ item_types = {
     'servers': Server,
     'tables': Table,
     'types': Type,
+    'domains': Domain,
     'usermappings': UserMapping,
     'views': View,
+    'materializedviews': MaterializedViews,
     'sequences': Sequence
 }
 

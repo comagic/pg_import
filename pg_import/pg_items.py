@@ -35,8 +35,8 @@ class PgObject(object):
                 out_file.write(self.post_data + '\n\n')
 
 class Schema(PgObject):
-    children = ['extensions', 'languages', 'sequences', 'types', 'functions', 'operators', 'casts',
-                 'aggregates', 'tables', 'views', 'triggers', 'servers', 'usermappings', 'foreigntables']
+    children = ['extensions', 'languages', 'sequences', 'types', 'domains', 'functions', 'operators', 'casts',
+                 'aggregates', 'tables', 'views', 'materializedviews', 'triggers', 'servers', 'usermappings', 'foreigntables']
 
 class Table(PgObject):
     def __init__(self, parser, file_name):
@@ -74,7 +74,13 @@ class Sequence(PgObject):
 class Type(PgObject):
     pass
 
+class Domain(PgObject):
+    pass
+
 class View(PgObject):
+    pass
+
+class MaterializedViews(PgObject):
     pass
 
 class ForeignTable(PgObject):
