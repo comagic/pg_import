@@ -42,8 +42,8 @@ class Distributor:
                 if rel_dir == dir_name == f.split('.')[0]:
                     self.schemas[dir_name] = Schema(self, os.path.join(root, f))
                 else:
-                    item_name = f.split('.')[0]
                     item_type = dir_name
+                    item_name = f if item_type == 'functions' else f.split('.')[0]
                     schema_name = rel_dir.split('/')[0]
                     self.schemas[schema_name].items[item_type][item_name] = item_types[item_type](self, os.path.join(root, f))
 
