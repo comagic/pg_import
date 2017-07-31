@@ -1,6 +1,7 @@
 import re
 import os
 
+
 class PgObject(object):
     children = []
 
@@ -15,9 +16,11 @@ class PgObject(object):
 
         if '\n--depend on ' in self.data:
             for s in self.data.split('\n'):
-                if s.startswith('--depend on '): 
-                    type, schema, name = re.match('--depend on (\w*) (\w*)\.(\w*)', s).groups()
-                    self.depends.append({'type': type+'s', 'schema':schema, 'name':name})
+                if s.startswith('--depend on '):
+                    type, schema, name = re.match(
+                        '--depend on (\w*) (\w*)\.(\w*)', s).groups()
+                    self.depends.append(
+                        {'type': type+'s', 'schema':schema, 'name':name})
 
     def restore_structure(self, out_file):
         if not self.is_restored_structure:
@@ -34,9 +37,12 @@ class PgObject(object):
             if self.post_data:
                 out_file.write(self.post_data + '\n\n')
 
+
 class Schema(PgObject):
-    children = ['extensions', 'languages', 'sequences', 'types', 'domains', 'functions', 'operators', 'casts',
-                 'aggregates', 'tables', 'views', 'materializedviews', 'triggers', 'servers', 'usermappings', 'foreigntables']
+    children = ['extensions', 'languages', 'sequences', 'types', 'domains',
+                'functions', 'operators', 'casts', 'aggregates', 'tables',
+                'views', 'materializedviews', 'triggers', 'servers',
+                'usermappings', 'foreigntables']
 
 class Table(PgObject):
     def __init__(self, parser, file_name):
@@ -59,44 +65,58 @@ class Table(PgObject):
             else:
                 break
 
+
 class Aggregate(PgObject):
     pass
+
 
 class Function(PgObject):
     pass
 
+
 class Operator(PgObject):
     pass
+
 
 class Sequence(PgObject):
     pass
 
+
 class Type(PgObject):
     pass
+
 
 class Domain(PgObject):
     pass
 
+
 class View(PgObject):
     pass
+
 
 class MaterializedViews(PgObject):
     pass
 
+
 class ForeignTable(PgObject):
     pass
+
 
 class Cast(PgObject):
     pass
 
+
 class Extension(PgObject):
     pass
+
 
 class Language(PgObject):
     pass
 
+
 class Server(PgObject):
     pass
+
 
 class UserMapping(PgObject):
     pass

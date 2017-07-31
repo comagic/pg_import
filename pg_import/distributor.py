@@ -2,8 +2,6 @@
 
 import re
 import os
-import psycopg2
-import psycopg2.extras
 
 from pg_import.pg_items import *
 
