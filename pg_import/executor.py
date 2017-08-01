@@ -23,6 +23,8 @@ class Executor():
     '''
 
     def __init__(self, section, src_dir, output):
+        assert section.issubset({'pre-data', 'data', 'post-data'})
+
         self.section = section
         self.output = output
         self.src_dir = src_dir
