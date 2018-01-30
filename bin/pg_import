@@ -4,9 +4,8 @@
 import os
 import sys
 import argparse
-import psycopg2
-from pg_import.distributor import Distributor
-from pg_import.data_restore import DataRestore
+from pg_import import executor
+
 
 arg_parser = argparse.ArgumentParser(description='Convert object files in plane postgres backup file for restore database',
                                      epilog='Report bugs to <andrey@ulab.ru>.')
@@ -22,16 +21,4 @@ args.out_file = args.out_file or sys.stdout
 if not os.access(args.src_dir, os.F_OK):
     arg_parser.error("Can not access to directory '%s'" % args.src_dir)
 
-if set(['pre-data', 'post-data']) & args.section:
-    d = Distributor()
-    d.parse(args.src_dir)
-
-if 'pre-data' in args.section:
-    d.restore_structure(args.out_file)
-
-if 'data' in args.section:
-    r = DataRestore(args.src_dir)
-    r.restore_all(args.out_file)
-
-if 'post-data' in args.section:
-    d.restore_complite(args.out_file)
+executor.Executor(args.section, args.src_dir, args.out_file)()
