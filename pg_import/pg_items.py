@@ -49,15 +49,15 @@ class Table(PgObject):
         super(Table, self).__init__(parser, file_name)
         self.post_data = ';\n\n'.join(self.data.split(';\n\n')[1:]) + '\n\n'
         self.data = self.data.split(';\n\n')[0] + ';\n\n'
-        pk = re.match('.*(\nalter table only.*\n    add constraint .* primary key[^\n]*;\n).*', self.post_data, flags=re.S)
+        pk = re.match('.*(\n?alter table only.*\n    add constraint .* primary key[^\n]*;\n).*', self.post_data, flags=re.S)
         if pk:
             pk = pk.groups()[0]
             self.post_data = self.post_data.replace(pk, '')
             self.data += pk
 
         while 1:
-            uni = re.match('.*(\ncreate unique index[^\n]*;\n).*', self.post_data, flags=re.S) or \
-                  re.match('.*(\nalter table only[^\n]*\n    add constraint [^\n]* unique[^\n]*;\n).*', self.post_data, flags=re.S)
+            uni = re.match('.*(\n?create unique index[^\n]*;\n).*', self.post_data, flags=re.S) or \
+                  re.match('.*(\n?alter table only[^\n]*\n    add constraint [^\n]* unique[^\n]*;\n).*', self.post_data, flags=re.S)
             if uni:
                 uni = uni.groups()[0]
                 self.post_data = self.post_data.replace(uni, '')
