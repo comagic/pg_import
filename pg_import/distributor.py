@@ -1,29 +1,28 @@
 # -*- coding:utf-8 -*-
 
-import re
 import os
-
-from pg_import.pg_items import *
+import pg_import.pg_items as pi
 
 item_types = {
-    'aggregates': Aggregate,
-    'casts': Cast,
-    'extensions': Extension,
-    'foreigntables': ForeignTable,
-    'functions': Function,
-    'triggers': Function,
-    'operators': Operator,
-    'languages': Language,
-    'SCHEMA': Schema,
-    'servers': Server,
-    'tables': Table,
-    'types': Type,
-    'domains': Domain,
-    'usermappings': UserMapping,
-    'views': View,
-    'materializedviews': MaterializedViews,
-    'sequences': Sequence
+    'aggregates': pi.Aggregate,
+    'casts': pi.Cast,
+    'extensions': pi.Extension,
+    'foreigntables': pi.ForeignTable,
+    'functions': pi.Function,
+    'triggers': pi.Function,
+    'operators': pi.Operator,
+    'languages': pi.Language,
+    'SCHEMA': pi.Schema,
+    'servers': pi.Server,
+    'tables': pi.Table,
+    'types': pi.Type,
+    'domains': pi.Domain,
+    'usermappings': pi.UserMapping,
+    'views': pi.View,
+    'materializedviews': pi.MaterializedViews,
+    'sequences': pi.Sequence
 }
+
 
 class Distributor:
     def __init__(self):
@@ -38,12 +37,17 @@ class Distributor:
                 continue
             for f in files:
                 if rel_dir == dir_name == f.split('.')[0]:
-                    self.schemas[dir_name] = Schema(self, os.path.join(root, f))
+                    self.schemas[dir_name] = pi.Schema(self,
+                                                       os.path.join(root, f))
                 else:
                     item_type = dir_name
-                    item_name = f if item_type == 'functions' else f.split('.')[0]
+                    if item_type == 'functions':
+                        item_name = f
+                    else:
+                        item_name = f.split('.')[0]
                     schema_name = rel_dir.split('/')[0]
-                    self.schemas[schema_name].items[item_type][item_name] = item_types[item_type](self, os.path.join(root, f))
+                    self.schemas[schema_name].items[item_type][item_name] = \
+                        item_types[item_type](self, os.path.join(root, f))
 
     def restore_structure(self, out_file):
         out_file.write('set check_function_bodies=off;\n')

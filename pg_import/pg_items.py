@@ -1,5 +1,4 @@
 import re
-import os
 
 
 class PgObject(object):
@@ -18,22 +17,24 @@ class PgObject(object):
             for s in self.data.split('\n'):
                 if s.startswith('--depend on '):
                     type, schema, name = re.match(
-                        '--depend on (\w*) (\w*)\.(\w*)', s).groups()
+                        '--depend on (\\w*) (\\w*)\\.(\\w*)', s).groups()
                     self.depends.append(
-                        {'type': type+'s', 'schema':schema, 'name':name})
+                        {'type': type+'s', 'schema': schema, 'name': name})
 
     def restore_structure(self, out_file):
         if not self.is_restored_structure:
             self.is_restored_structure = True
             for d in self.depends:
-                self.parser.schemas[d['schema']].items[d['type']][d['name']].restore_structure(out_file)
+                self.parser.schemas[d['schema']].items[d['type']][d['name']].\
+                    restore_structure(out_file)
             out_file.write(self.data + '\n\n')
 
     def restore_complite(self, out_file):
         if not self.is_restored_complite:
             self.is_restored_complite = True
             for d in self.depends:
-                self.parser.schemas[d['schema']].items[d['type']][d['name']].restore_complite(out_file)
+                self.parser.schemas[d['schema']].items[d['type']][d['name']].\
+                    restore_complite(out_file)
             if self.post_data:
                 out_file.write(self.post_data + '\n\n')
 
@@ -44,20 +45,26 @@ class Schema(PgObject):
                 'views', 'materializedviews', 'triggers', 'servers',
                 'usermappings', 'foreigntables']
 
+
 class Table(PgObject):
     def __init__(self, parser, file_name):
         super(Table, self).__init__(parser, file_name)
         self.post_data = ';\n\n'.join(self.data.split(';\n\n')[1:]) + '\n\n'
         self.data = self.data.split(';\n\n')[0] + ';\n\n'
-        pk = re.match('.*(\n?alter table only.*\n    add constraint .* primary key[^\n]*;\n).*', self.post_data, flags=re.S)
+        pk = re.match('.*(\n?alter table only.*\n    add '
+                      'constraint .* primary key[^\n]*;\n).*',
+                      self.post_data, flags=re.S)
         if pk:
             pk = pk.groups()[0]
             self.post_data = self.post_data.replace(pk, '')
             self.data += pk
 
         while 1:
-            uni = re.match('.*(\n?create unique index[^\n]*;\n).*', self.post_data, flags=re.S) or \
-                  re.match('.*(\n?alter table only[^\n]*\n    add constraint [^\n]* unique[^\n]*;\n).*', self.post_data, flags=re.S)
+            uni = re.match('.*(\n?create unique index[^\n]*;\n).*',
+                           self.post_data, flags=re.S) or \
+                  re.match('.*(\n?alter table only[^\n]*\n    '
+                           'add constraint [^\n]* unique[^\n]*;\n).*',
+                           self.post_data, flags=re.S)
             if uni:
                 uni = uni.groups()[0]
                 self.post_data = self.post_data.replace(uni, '')
