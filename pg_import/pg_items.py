@@ -41,8 +41,8 @@ class PgObject(object):
 
 class Schema(PgObject):
     children = ['extensions', 'languages', 'sequences', 'types', 'domains',
-                'functions', 'operators', 'casts', 'aggregates', 'tables',
-                'views', 'materializedviews', 'triggers', 'servers',
+                'functions', 'procedures', 'operators', 'casts', 'aggregates',
+                'tables', 'views', 'materializedviews', 'triggers', 'servers',
                 'usermappings', 'foreigntables']
 
 
@@ -78,6 +78,10 @@ class Aggregate(PgObject):
 
 
 class Function(PgObject):
+    pass
+
+
+class Procedure(PgObject):
     pass
 
 

@@ -9,6 +9,7 @@ item_types = {
     'extensions': pi.Extension,
     'foreigntables': pi.ForeignTable,
     'functions': pi.Function,
+    'procedures': pi.Procedure,
     'triggers': pi.Function,
     'operators': pi.Operator,
     'languages': pi.Language,

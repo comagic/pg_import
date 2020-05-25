@@ -2,5 +2,9 @@
 *.pyc
 *.conf
 .cache
-*.egg-info
-*.egg
+*.egg*
+*.ve*
+.coverage
+.report*
+build*
+.pytest_cache*
