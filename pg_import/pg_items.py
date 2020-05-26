@@ -40,10 +40,10 @@ class PgObject(object):
 
 
 class Schema(PgObject):
-    children = ['extensions', 'languages', 'sequences', 'types', 'domains',
-                'functions', 'procedures', 'operators', 'casts', 'aggregates',
-                'tables', 'views', 'materializedviews', 'triggers', 'servers',
-                'usermappings', 'foreigntables']
+    children = ['extensions', 'languages', 'servers', 'usermappings',
+                'sequences', 'types', 'domains', 'functions', 'procedures',
+                'operators', 'casts', 'aggregates', 'tables', 'views',
+                'materializedviews', 'triggers', 'foreigntables']
 
 
 class Table(PgObject):
