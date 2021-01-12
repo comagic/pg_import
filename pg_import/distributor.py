@@ -3,66 +3,68 @@
 import os
 import pg_import.pg_items as pi
 
-item_types = {
-    'aggregates': pi.Aggregate,
-    'casts': pi.Cast,
-    'extensions': pi.Extension,
-    'foreigntables': pi.ForeignTable,
-    'functions': pi.Function,
-    'procedures': pi.Procedure,
-    'triggers': pi.Function,
-    'operators': pi.Operator,
-    'languages': pi.Language,
-    'SCHEMA': pi.Schema,
-    'servers': pi.Server,
-    'tables': pi.Table,
-    'types': pi.Type,
-    'domains': pi.Domain,
-    'usermappings': pi.UserMapping,
-    'views': pi.View,
-    'materializedviews': pi.MaterializedViews,
-    'sequences': pi.Sequence
-}
-
 
 class Distributor:
+    item_types = {
+        'extensions': pi.Extension,
+        'languages': pi.Language,
+        'servers': pi.Server,
+        'schemas': pi.Schema,
+        'types': pi.Type,
+        'domains': pi.Domain,
+        'sequences': pi.Sequence,
+        'tables': pi.Table,
+        'foreigntables': pi.ForeignTable,
+        'functions': pi.Function,
+        'procedures': pi.Procedure,
+        'triggers': pi.Function,
+        'operators': pi.Operator,
+        'casts': pi.Cast,
+        'aggregates': pi.Aggregate,
+        'views': pi.View,
+        'materializedviews': pi.MaterializedViews,
+    }
+
+    valid_top_dirs = [
+        'casts',
+        'extensions',
+        'languages',
+        'servers',
+        'schemas'
+    ]
+
     def __init__(self):
-        self.schemas = {}
+        self.items = {i: {} for i in self.item_types}
 
     def parse(self, src_dir):
-        src_dir = os.path.join(src_dir, 'schema')
-        for root, dirs, files in os.walk(src_dir):
-            rel_dir = os.path.relpath(root, src_dir)
-            dir_name = os.path.basename(root)
-            if rel_dir == '.':
+        for abs_dir, dirs, files in os.walk(src_dir):
+            rel_dir = os.path.relpath(abs_dir, src_dir)
+            if not any(rel_dir.startswith(d) for d in self.valid_top_dirs):
                 continue
+            item_type = os.path.basename(rel_dir)
+            if rel_dir.startswith('schemas/'):
+                schema = rel_dir.split('/')[1]
+            else:
+                schema = None
             for f in files:
-                if rel_dir == dir_name == f.split('.')[0]:
-                    self.schemas[dir_name] = pi.Schema(self,
-                                                       os.path.join(root, f))
-                else:
-                    item_type = dir_name
-                    if item_type == 'functions':
-                        item_name = f
-                    else:
-                        item_name = f.split('.')[0]
-                    schema_name = rel_dir.split('/')[0]
-                    self.schemas[schema_name].items[item_type][item_name] = \
-                        item_types[item_type](self, os.path.join(root, f))
+                item_name = os.path.splitext(f)[0]
+                file_name = os.path.join(abs_dir, f)
+                if (os.path.join('schemas', item_name) in rel_dir and
+                   item_type == item_name):
+                    item_type = 'schemas'
+                if item_type in ['functions', 'triggers']:
+                    item_name = f  # the same name and different languages
+                self.items[item_type][(schema, item_name)] = \
+                    self.item_types[item_type](self, file_name)
 
-    def restore_structure(self, out_file):
+    def restore_pre_data(self, out_file):
         out_file.write('set check_function_bodies=off;\n')
-        for s in self.schemas.values():
-            s.restore_structure(out_file)
-        for c in self.schemas['public'].children:
-            for s in self.schemas.values():
-                for i in s.items[c].values():
-                    i.restore_structure(out_file)
+        for item_type in self.item_types:
+            for i in self.items[item_type].values():
+                i.restore_structure(out_file)
 
-    def restore_complite(self, out_file):
-        for s in self.schemas.values():
-            s.restore_complite(out_file)
-        for c in self.schemas['public'].children:
-            for s in self.schemas.values():
-                for i in s.items[c].values():
-                    i.restore_complite(out_file)
+    def restore_post_data(self, out_file):
+        for i in self.items['tables'].values():
+            i.restore_unique(out_file)
+        for i in self.items['tables'].values():
+            i.restore_post_data(out_file)

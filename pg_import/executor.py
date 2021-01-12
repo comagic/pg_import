@@ -35,11 +35,11 @@ class Executor():
             d.parse(self.src_dir)
 
         if 'pre-data' in self.section:
-            d.restore_structure(self.output)
+            d.restore_pre_data(self.output)
 
         if 'data' in self.section:
             r = DataRestore(self.src_dir)
             r.restore_all(self.output)
 
         if 'post-data' in self.section:
-            d.restore_complite(self.output)
+            d.restore_post_data(self.output)
