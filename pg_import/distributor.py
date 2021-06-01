@@ -38,6 +38,8 @@ class Distributor:
 
     def parse(self, src_dir):
         for abs_dir, dirs, files in os.walk(src_dir):
+            dirs.sort()
+            files.sort()
             rel_dir = os.path.relpath(abs_dir, src_dir)
             if not any(rel_dir.startswith(d) for d in self.valid_top_dirs):
                 continue
