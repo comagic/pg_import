@@ -175,7 +175,26 @@ class MaterializedViews(PgObject):
 
 
 class ForeignTable(PgObject):
-    pass
+    def __init__(self, parser, file_name):
+        super(ForeignTable, self).__init__(parser, file_name)
+        self.post_data = ';\n\n'.join(self.data.split(';\n\n')[1:]) + '\n\n'
+        self.data = self.data.split(';\n\n')[0] + ';\n\n'
+
+        table_name = re.match('^create foreign table (.*) \\(',
+                              self.data).groups()[0]
+        for column in self.data.split('\n'):
+            m = re.match('^  ([^ ]+) .* default (.*\\(.*\\)),?( --.*)?$', column)
+            if m:
+                column_name, func_def, _ = m.groups()
+                if func_def != 'now()':
+                    self.post_data += ('\n\nalter foreign table %s alter column %s '
+                                       'set default %s;' % (table_name,
+                                                            column_name,
+                                                            func_def))
+                    self.data = self.data.replace('default %s' % func_def, '')
+
+    def restore_post_data(self, out_file):
+        out_file.write(self.post_data + '\n\n')
 
 
 class Cast(PgObject):

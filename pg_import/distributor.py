@@ -70,3 +70,5 @@ class Distributor:
             i.restore_unique(out_file)
         for i in self.items['tables'].values():
             i.restore_post_data(out_file)
+        for i in self.items['foreigntables'].values():
+            i.restore_post_data(out_file)
