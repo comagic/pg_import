@@ -84,11 +84,10 @@ class Table(PgObject):
                       re.match('^create unlogged table (.*) \\(', self.data)
                       ).groups()[0]
         for column in self.data.split('\n'):
-            m = re.match('^  ([^ ]+) .* default (.*\\(.*\\)),?$', column)
+            m = re.match('^  ([^ ]+) .* default (.*\\(.*\\)),?( --.*)?$', column)
             if m:
-                column_name, func_def = m.groups()
-                if (func_def != 'now()' and
-                   not func_def.startswith('nextval')):
+                column_name, func_def, _ = m.groups()
+                if func_def != 'now()':
                     self.post_data += ('\n\nalter table %s alter column %s '
                                        'set default %s;' % (table_name,
                                                             column_name,
