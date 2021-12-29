@@ -84,7 +84,8 @@ class Table(PgObject):
                       re.match('^create unlogged table (.*) \\(', self.data)
                       ).groups()[0]
         for column in self.data.split('\n'):
-            m = re.match('^  ([^ ]+) .* default (.*\\(.*\\)),?( --.*)?$', column)
+            m = re.match('^  ([^ ]+) .* default (.*\\(.*\\)),?( --.*)?$',
+                         column)
             if m:
                 column_name, func_def, _ = m.groups()
                 if func_def != 'now()':
@@ -136,11 +137,11 @@ class Sequence(PgObject):
 class Type(PgObject):
     def get_dependency(self):
         res = []
-        if re.match('^create type \S+ as \($', self.data.split('\n')[0]):
+        if re.match('^create type \\S+ as \\($', self.data.split('\n')[0]):
             for c in self.data.split('\n')[1:]:
                 if c == ');':
                     break
-                att_type = re.match('^  \S+ (\S+?)(\[.*|\(.*|,.*| with.*'
+                att_type = re.match('^  \\S+ (\\S+?)(\\[.*|\\(.*|,.*| with.*'
                                     '| varying.*)?$', c)
                 if att_type:
                     att_type = att_type.groups()[0]
@@ -183,11 +184,13 @@ class ForeignTable(PgObject):
         table_name = re.match('^create foreign table (.*) \\(',
                               self.data).groups()[0]
         for column in self.data.split('\n'):
-            m = re.match('^  ([^ ]+) .* default (.*\\(.*\\)),?( --.*)?$', column)
+            m = re.match('^  ([^ ]+) .* default (.*\\(.*\\)),?( --.*)?$',
+                         column)
             if m:
                 column_name, func_def, _ = m.groups()
                 if func_def != 'now()':
-                    self.post_data += ('\n\nalter foreign table %s alter column %s '
+                    self.post_data += ('\n\nalter foreign table %s '
+                                       'alter column %s '
                                        'set default %s;' % (table_name,
                                                             column_name,
                                                             func_def))
