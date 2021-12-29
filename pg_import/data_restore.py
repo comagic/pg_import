@@ -11,5 +11,7 @@ class DataRestore:
     def restore_all(self, out_file):
         src_dir = os.path.join(self.src_dir, 'data')
         for root, dirs, files in os.walk(src_dir):
+            dirs.sort()
+            files.sort()
             for f in files:
                 out_file.write(open(os.path.join(root, f)).read()+'\n')
