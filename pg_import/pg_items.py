@@ -1,4 +1,20 @@
+import sys
 import re
+
+
+system_types = set([
+    'integer',
+    'bigint',
+    'text',
+    'character',
+    'boolean',
+    'timestamp',
+    'date',
+    'interval',
+    'numeric',
+    'float',
+    'inet',
+])
 
 
 class PgObject(object):
@@ -14,8 +30,13 @@ class PgObject(object):
         if not self.is_restored_structure:
             self.is_restored_structure = True
             for d in self.get_dependency():
-                self.parser.items[d['type']][(d['schema'], d['name'])].\
-                    restore_structure(out_file)
+                item = self.parser.items[d['type']].get(
+                                                    (d['schema'], d['name']))
+                if item is None:
+                    print('WARNING: Resolve dependency: item not found:',
+                          d, file=sys.stderr)
+                    continue
+                item.restore_structure(out_file)
             out_file.write(self.data + '\n\n')
 
     def get_dependency(self):
@@ -114,7 +135,32 @@ class Sequence(PgObject):
 
 
 class Type(PgObject):
-    pass
+    def get_dependency(self):
+        res = []
+        if re.match('^create type \S+ as \($', self.data.split('\n')[0]):
+            for c in self.data.split('\n')[1:]:
+                if c == ');':
+                    break
+                att_type = re.match('^  \S+ (\S+?)(\[.*|\(.*|,.*| with.*'
+                                    '| varying.*)?$', c)
+                if att_type:
+                    att_type = att_type.groups()[0]
+                else:
+                    print('WARNING: cannot determine attribute type:', c,
+                          file=sys.stderr)
+                    continue
+                if att_type in system_types:
+                    continue
+                if '.' in att_type:
+                    att_schema, att_type = att_type.split('.')
+                else:
+                    att_schema = 'public'
+                res.append({
+                    'type': 'types',
+                    'schema': att_schema,
+                    'name': att_type,
+                })
+        return res
 
 
 class Domain(PgObject):
