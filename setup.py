@@ -7,7 +7,7 @@ PACKAGE_TYPE = 'pg-tools'
 PACKAGE_NAME = 'pg-import'
 PACKAGE_DESC = 'git to pg converter'
 PACKAGE_LONG_DESC = 'Convert repository (pg-export format) to ddl-file'
-PACKAGE_VERSION = '1.2.2'
+PACKAGE_VERSION = '1.3.0'
 
 
 class PyTest(TestCommand):

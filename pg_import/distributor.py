@@ -36,7 +36,7 @@ class Distributor:
     def __init__(self):
         self.items = {i: {} for i in self.item_types}
 
-    def parse(self, src_dir):
+    def parse(self, src_dir, schema):
         for abs_dir, dirs, files in os.walk(src_dir):
             dirs.sort()
             files.sort()
@@ -45,9 +45,11 @@ class Distributor:
                 continue
             item_type = os.path.basename(rel_dir)
             if rel_dir.startswith('schemas/'):
-                schema = rel_dir.split('/')[1]
+                current_schema = rel_dir.split('/')[1]
             else:
-                schema = None
+                current_schema = None
+            if schema and schema != current_schema:
+                continue
             for f in files:
                 item_name = os.path.splitext(f)[0]
                 file_name = os.path.join(abs_dir, f)
@@ -56,7 +58,7 @@ class Distributor:
                     item_type = 'schemas'
                 if item_type in ['functions', 'triggers']:
                     item_name = f  # the same name and different languages
-                self.items[item_type][(schema, item_name)] = \
+                self.items[item_type][(current_schema, item_name)] = \
                     self.item_types[item_type](self, file_name)
 
     def restore_pre_data(self, out_file):

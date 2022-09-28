@@ -13,6 +13,7 @@ def main():
         arg_parser.add_argument('--section',
                                 action='append',
                                 choices=['pre-data', 'data', 'post-data'])
+    arg_parser.add_argument('--schema')
     arg_parser.add_argument('src_dir',
                             help='directory with object files')
     arg_parser.add_argument('out_file',
@@ -27,4 +28,4 @@ def main():
     if not os.access(args.src_dir, os.F_OK):
         arg_parser.error("Can not access to directory '%s'" % args.src_dir)
 
-    executor.Executor(args.section, args.src_dir, args.out_file)()
+    executor.Executor(args.section, args.schema, args.src_dir, args.out_file)()
