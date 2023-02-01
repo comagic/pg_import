@@ -1,5 +1,3 @@
-# -*- coding:utf-8 -*-
-
 import os
 import pg_import.pg_items as pi
 
@@ -33,6 +31,10 @@ class Distributor:
         'schemas'
     ]
 
+    ignore_files = {
+        '.DS_Store'
+    }
+
     def __init__(self):
         self.items = {i: {} for i in self.item_types}
 
@@ -51,6 +53,8 @@ class Distributor:
             if schema and schema != current_schema:
                 continue
             for f in files:
+                if f in self.ignore_files:
+                    continue
                 item_name = os.path.splitext(f)[0]
                 file_name = os.path.join(abs_dir, f)
                 if (os.path.join('schemas', item_name) in rel_dir and

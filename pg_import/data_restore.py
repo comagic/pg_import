@@ -1,9 +1,11 @@
-# -*- coding:utf-8 -*-
-
+import sys
 import os
 
 
 class DataRestore:
+    ignore_files = {
+        '.DS_Store'
+    }
 
     def __init__(self, src_dir, schema):
         self.src_dir = src_dir
@@ -17,6 +19,8 @@ class DataRestore:
             dirs.sort()
             files.sort()
             for f in files:
+                if f in self.ignore_files:
+                    continue
                 file_name = os.path.join(root, f)
                 try:
                     body = open(file_name).read()+'\n'
