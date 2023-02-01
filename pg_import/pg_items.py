@@ -21,7 +21,11 @@ class PgObject(object):
     def __init__(self, parser, file_name):
         self.parser = parser
         self.depends = []
-        self.data = open(file_name).read()
+        try:
+            self.data = open(file_name).read()
+        except Exception:
+            print(f'ERROR: Cannot read file {file_name}', file=sys.stderr)
+            raise
         self.post_data = ''
         self.is_restored_structure = False
         self.is_restored_complite = False

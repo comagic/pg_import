@@ -17,4 +17,13 @@ class DataRestore:
             dirs.sort()
             files.sort()
             for f in files:
-                out_file.write(open(os.path.join(root, f)).read()+'\n')
+                file_name = os.path.join(root, f)
+                try:
+                    body = open(file_name).read()+'\n'
+                except Exception:
+                    print(
+                        f'ERROR: Cannot read file {file_name}',
+                        file=sys.stderr
+                    )
+                    raise
+                out_file.write(body)
