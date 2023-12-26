@@ -2,7 +2,7 @@ import sys
 import re
 
 
-system_types = set([
+system_types = {
     'integer',
     'bigint',
     'text',
@@ -13,8 +13,8 @@ system_types = set([
     'interval',
     'numeric',
     'float',
-    'inet',
-])
+    'inet'
+}
 
 
 class PgObject(object):
@@ -34,11 +34,9 @@ class PgObject(object):
         if not self.is_restored_structure:
             self.is_restored_structure = True
             for d in self.get_dependency():
-                item = self.parser.items[d['type']].get(
-                                                    (d['schema'], d['name']))
+                item = self.parser.items[d['type']].get((d['schema'], d['name']))
                 if item is None:
-                    print('WARNING: Resolve dependency: item not found:',
-                          d, file=sys.stderr)
+                    print('WARNING: Resolve dependency: item not found:', d, file=sys.stderr)
                     continue
                 item.restore_structure(out_file)
             out_file.write(self.data + '\n\n')
@@ -51,7 +49,7 @@ class PgObject(object):
                     type, schema, name = re.match(
                         '--depend on (\\w*) (\\w*)\\.(\\w*)', s).groups()
                     res.append(
-                        {'type': type+'s', 'schema': schema, 'name': name})
+                        {'type': type + 's', 'schema': schema, 'name': name})
         return res
 
 

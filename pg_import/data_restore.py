@@ -23,7 +23,7 @@ class DataRestore:
                     continue
                 file_name = os.path.join(root, f)
                 try:
-                    body = open(file_name).read()+'\n'
+                    body = open(file_name).read() + '\n'
                 except Exception:
                     print(
                         f'ERROR: Cannot read file {file_name}',
