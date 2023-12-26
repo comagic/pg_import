@@ -34,6 +34,8 @@ def main():
                             type=str,
                             help='password for connect db '
                                  '(env variable PG_PASSWORD=<password>)')
+    arg_parser.add_argument('-r', '--roles',
+                            type=argparse.FileType('r'))
     arg_parser.add_argument('--rebuild',
                             action="store_true",
                             help='drop if exists / create database')
@@ -58,5 +60,6 @@ def main():
         port=args.port,
         user=args.user,
         password=args.password,
-        rebuild=args.rebuild
+        rebuild=args.rebuild,
+        roles=args.roles,
     )()

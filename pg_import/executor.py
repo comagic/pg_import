@@ -29,7 +29,7 @@ class Executor:
 
     def __init__(self, section, schema, src_dir, output=None,
                  database=None, host=None, port=None, user=None, password=None,
-                 rebuild=False):
+                 rebuild=False, roles=None):
         assert section.issubset({'pre-data', 'data', 'post-data'})
 
         self.section = section
@@ -41,6 +41,7 @@ class Executor:
         self.user = user
         self.password = password
         self.rebuild = rebuild
+        self.roles = roles
         if database:
             self.output = io.StringIO()
         else:
@@ -128,6 +129,8 @@ class Executor:
             con = await self._connect('postgres')
             await con.execute(f'drop database if exists "{self.database}" (force)')
             await con.execute(f'create database "{self.database}"')
+            if self.roles:
+                await con.execute(self.roles.read())
             await con.close()
 
         con = await self._connect()
