@@ -133,6 +133,8 @@ class Executor:
                 await con.execute(self.roles.read())
             await con.close()
 
-        con = await self._connect()
-        await con.execute(self.get_sql())
-        await con.close()
+        sql = self.get_sql()
+        if sql:
+            con = await self._connect()
+            await con.execute(sql)
+            await con.close()
