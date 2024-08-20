@@ -39,6 +39,9 @@ def main():
     arg_parser.add_argument('--rebuild',
                             action="store_true",
                             help='drop if exists / create database')
+    arg_parser.add_argument('--refresh-sequence',
+                            action="store_true",
+                            help='do setval() for all sequences by max(column)')
     arg_parser.add_argument('src_dir',
                             help='directory with object files')
     arg_parser.add_argument('out_file',
@@ -62,4 +65,5 @@ def main():
         password=args.password,
         rebuild=args.rebuild,
         roles=args.roles,
+        refresh_sequence=args.refresh_sequence,
     )()

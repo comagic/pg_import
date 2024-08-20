@@ -6,6 +6,7 @@ import asyncpg
 
 from pg_import.distributor import Distributor
 from pg_import.data_restore import DataRestore
+from pg_import.refresh_sequence import refresh_sequence
 
 
 class Executor:
@@ -29,7 +30,7 @@ class Executor:
 
     def __init__(self, section, schema, src_dir, output=None,
                  database=None, host=None, port=None, user=None, password=None,
-                 rebuild=False, roles=None):
+                 rebuild=False, roles=None, refresh_sequence=False):
         assert section.issubset({'pre-data', 'data', 'post-data'})
 
         self.section = section
@@ -42,6 +43,7 @@ class Executor:
         self.password = password
         self.rebuild = rebuild
         self.roles = roles
+        self.refresh_sequence = refresh_sequence
         if database:
             self.output = io.StringIO()
         else:
@@ -61,6 +63,9 @@ class Executor:
 
         if 'post-data' in self.section:
             d.restore_post_data(self.output)
+
+        if self.refresh_sequence:
+            refresh_sequence(self.output)
 
         if self.database:
             self.build_database()
