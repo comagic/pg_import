@@ -6,9 +6,9 @@ from . import executor
 
 def main():
     arg_parser = argparse.ArgumentParser(
-        description='Convert object files in plane postgres '
-                    'backup file for restore database',
-        epilog='Report bugs to <a.chernyakov@comagic.dev>.',
+        description='Convert object files (in pg-export style) in '
+                    'sequence of commands for restore database',
+        epilog='Report bugs: https://github.com/comagic/pg_import/issues',
         conflict_handler='resolve'
     )
     section_def = arg_parser.add_argument('--section',
