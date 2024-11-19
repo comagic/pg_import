@@ -6,7 +6,7 @@ from . import executor
 
 def main():
     arg_parser = argparse.ArgumentParser(
-        description='Convert object files (in pg-export style) in '
+        description='Convert object files (pg-export format) in '
                     'sequence of commands for restore database',
         epilog='Report bugs: https://github.com/comagic/pg_import/issues',
         conflict_handler='resolve'
