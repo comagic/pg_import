@@ -7,7 +7,7 @@ PACKAGE_TYPE = 'pg-tools'
 PACKAGE_NAME = 'pg-import'
 PACKAGE_DESC = 'git to pg converter'
 PACKAGE_LONG_DESC = 'Convert repository (pg-export format) to ddl-file'
-PACKAGE_VERSION = '2.0.0'
+PACKAGE_VERSION = '2.3.1'
 
 
 class PyTest(TestCommand):
@@ -40,13 +40,13 @@ setup_requires = []
 
 # Что нужно для установки
 install_requires = [
-    'asyncpg==0.27.0'
+    'asyncpg>=0.27.0,<0.31.0',
 ]
 
 
 # Что нужно для запуска python setup.py test
 tests_require = [
-    'flake8>=4,<5',
+    'flake8>=5,<6',
     'pytest',
     'pytest-cov',
     'pytest-flake8',
