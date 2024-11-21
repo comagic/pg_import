@@ -8,7 +8,7 @@ PACKAGE_NAME = 'pg-import'
 PACKAGE_DESC = 'git to pg converter'
 PACKAGE_LONG_DESC = 'Convert object files (pg-export format) in ' \
                     'sequence of commands for restore database'
-PACKAGE_VERSION = '2.3.1'
+PACKAGE_VERSION = '2.3.2'
 
 
 class PyTest(TestCommand):

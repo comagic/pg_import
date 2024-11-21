@@ -94,7 +94,7 @@ class Executor:
                     copy_data = []
                 else:
                     s_len = len(s.encode('utf-8'))
-                    if cur_len + s_len < 126 * 1024:
+                    if cur_len + s_len < 120 * 1024:
                         copy_data.append(s)
                         cur_len += s_len
                     else:
