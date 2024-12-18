@@ -1,7 +1,15 @@
+## installation
+
+```
+pip install pg-import
+```
+
+## usage
+
 ```
 usage: pg_import [--help] [--section {pre-data,data,post-data}] [--schema SCHEMA] [-d DATABASE] [-h HOST] [-p PORT] [-U USER] [-W PASSWORD] [-r ROLES] [--rebuild] [--refresh-sequence] src_dir [out_file]
 
-Convert object files (in pg-export style) in sequence of commands for restore database
+Convert object files (pg-export format) in sequence of commands for restore database
 
 positional arguments:
   src_dir               directory with object files
