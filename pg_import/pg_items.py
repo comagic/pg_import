@@ -220,3 +220,7 @@ class Server(PgObject):
 
 class UserMapping(PgObject):
     pass
+
+
+class Publication(PgObject):
+    pass

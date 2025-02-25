@@ -21,6 +21,7 @@ class Distributor:
         'aggregates': pi.Aggregate,
         'views': pi.View,
         'materializedviews': pi.MaterializedViews,
+        'publications': pi.Publication,
     }
 
     valid_top_dirs = [
@@ -28,7 +29,8 @@ class Distributor:
         'extensions',
         'languages',
         'servers',
-        'schemas'
+        'schemas',
+        'publications'
     ]
 
     ignore_files = {
