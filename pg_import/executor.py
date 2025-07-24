@@ -1,6 +1,7 @@
 import asyncio
 import io
 import re
+import sys
 
 import asyncpg
 
@@ -140,6 +141,33 @@ class Executor:
 
         sql = self.get_sql().strip()
         if sql:
-            con = await self._connect()
-            await con.execute(sql)
-            await con.close()
+            try:
+                con = await self._connect()
+                await con.execute(sql)
+                await con.close()
+            except asyncpg.exceptions.SyntaxOrAccessError as e:
+                print(f'{str(e.__class__.__name__)}: {str(e)}', file=sys.stderr)
+                if hasattr(e, 'query') and hasattr(e, 'position'):
+                    self.print_pg_error_context(e.query, e.position)
+                exit(1)
+
+    @staticmethod
+    def print_pg_error_context(query: str, position: int, context_lines: int = 5):
+        if not query or not position:
+            return
+        position = int(position)
+        try:
+            print('CONTEXT:')
+            before = query[max(position - 1, 0)::-1]
+            line_start = before.splitlines()[0][::-1]
+            before = '\n'.join(before.splitlines()[1:context_lines])[::-1]
+            index = max(len(line_start) - 1, 0)
+            after = query[position:]
+            line_end = after.splitlines()[0]
+            after = '\n'.join(after.splitlines()[1:context_lines])
+            print(before, file=sys.stderr)
+            print(f'{line_start}{line_end}', file=sys.stderr)
+            print(f'{"-" * index}^', file=sys.stderr)
+            print(after, file=sys.stderr)
+        except Exception as e:
+            print(f'cannot calculate context: {str(e)}', file=sys.stderr)
