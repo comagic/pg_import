@@ -2,6 +2,7 @@ import os
 import sys
 import argparse
 from . import executor
+from . import __version__
 
 
 def main():
@@ -11,6 +12,9 @@ def main():
         epilog='Report bugs: https://github.com/comagic/pg_import/issues',
         conflict_handler='resolve'
     )
+    arg_parser.add_argument('--version',
+                            action='version',
+                            version=__version__)
     section_def = arg_parser.add_argument('--section',
                                           action='append',
                                           choices=['pre-data', 'data', 'post-data'])

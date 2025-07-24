@@ -3,12 +3,15 @@ import sys
 from setuptools import find_packages, setup
 from setuptools.command.test import test as TestCommand
 
+from pg_import import __version__
+
+
 PACKAGE_TYPE = 'pg-tools'
 PACKAGE_NAME = 'pg-import'
 PACKAGE_DESC = 'git to pg converter'
 PACKAGE_LONG_DESC = 'Convert object files (pg-export format) in ' \
                     'sequence of commands for restore database'
-PACKAGE_VERSION = '2.4.0'
+PACKAGE_VERSION = __version__
 
 
 class PyTest(TestCommand):
