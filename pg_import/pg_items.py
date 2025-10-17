@@ -28,7 +28,6 @@ class PgObject(object):
             raise
         self.post_data = ''
         self.is_restored_structure = False
-        self.is_restored_complite = False
 
     def restore_structure(self, out_file):
         if not self.is_restored_structure:
