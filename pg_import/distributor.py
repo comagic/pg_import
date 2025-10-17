@@ -22,6 +22,7 @@ class Distributor:
         'views': pi.View,
         'materializedviews': pi.MaterializedViews,
         'publications': pi.Publication,
+        'event_triggers': pi.EventTrigger,
     }
 
     valid_top_dirs = [
@@ -30,7 +31,8 @@ class Distributor:
         'languages',
         'servers',
         'schemas',
-        'publications'
+        'publications',
+        'event_triggers'
     ]
 
     ignore_files = {

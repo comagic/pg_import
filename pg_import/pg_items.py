@@ -224,3 +224,7 @@ class UserMapping(PgObject):
 
 class Publication(PgObject):
     pass
+
+
+class EventTrigger(PgObject):
+    pass
